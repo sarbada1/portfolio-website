@@ -148,3 +148,31 @@ function initMap() {
       ]
     });
 }
+document.getElementById('contact-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+
+    fetch(this.action, {
+        method: this.method,
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            alert('Message sent successfully!');
+            this.reset();
+        } else {
+            response.json().then(data => {
+                if (Object.hasOwn(data, 'errors')) {
+                    alert('Failed to send message: ' + data["errors"].map(error => error["message"]).join(", "));
+                } else {
+                    alert('Failed to send message. Please try again later.');
+                }
+            });
+        }
+    }).catch(error => {
+        alert('Failed to send message. Please try again later.');
+    });
+});
